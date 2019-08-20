@@ -8,21 +8,23 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Provides application storage paths
+ * Provides application storage files and paths
  */
 public final class StorageUtils {
+
     private StorageUtils() {
     }
 
     /**
-     * Returns application cache directory. Cache directory will be created on
-     * SD card <i>("/Android/data/[app_package_name]/cache")</i> if card is
-     * mounted. Else - Android defines cache directory on device's file system.
+     * Returns the file which the absolute path to the application specific cache directory.
+     * where the cache directory will be created on SD card
+     * <i>("/Android/data/[app_package_name]/cache")</i> if card is mounted.
+     * Else - Android defines cache directory on device's file system.
      *
      * @param context Application context
-     * @return Cache {@link File directory}
+     * @return cacheFile {@link File File},which holding application cache files
      */
-    public static File getCacheDirectory(Context context) {
+    public static File getCacheDir(Context context) {
         File appCacheDir = null;
         if (Environment.getExternalStorageState().equals(
                 Environment.MEDIA_MOUNTED)) {
@@ -35,14 +37,15 @@ public final class StorageUtils {
     }
 
     /**
-     * Returns application cache directory. Cache directory will be created on
-     * SD card <i>("/Android/data/[app_package_name]/files")</i> if card is
-     * mounted. Else - Android defines cache directory on device's file system.
+     * Returns the file which the absolute path to the directory on the SD card or on the filesystem,
+     * where the "files" directory will be created on SD card
+     * <i>("/Android/data/[app_package_name]/files")</i> if card is mounted.
+     * Else - Android defines “files” directory on device's file system.
      *
      * @param context Application context
-     * @return Cache {@link File directory}
+     * @return filesFile {@link File File},which holding application files.
      */
-    public static File getFilesDirectory(Context context) {
+    public static File getFilesDir(Context context) {
         File appFilesDir = null;
         if (Environment.getExternalStorageState().equals(
                 Environment.MEDIA_MOUNTED)) {
@@ -55,68 +58,89 @@ public final class StorageUtils {
     }
 
     /**
-     * Returns custom application cache directory . Cache directory will be
-     * created on SD card
-     * <i>("/Android/data/[app_package_name]/cache/customDir")</i> if card is
-     * mounted. Else - Android defines cache directory on device's file system.
+     * Returns the file which the absolute path to the application specific cache's custom directory.
+     * where the cache's custom directory will be created on SD card
+     * <i>("/Android/data/[app_package_name]/cache/customDirName")</i> if card is mounted.
+     * Else - Android defines cache directory on device's file system.
      *
-     * @param context Application context
-     * @return Cache {@link File directory}
+     * @param context       Application context
+     * @param customDirName custom directory name
+     * @return cacheCustomFile {@link File File},which holding application cache's custom files.
      */
-    public static File getCustomCacheDirectory(Context context,
-                                               String customDir) {
-        File cacheDir = getCacheDirectory(context);
-        File customCacheDir = new File(cacheDir, customDir);
-        if (!customCacheDir.exists()) {
-            if (!customCacheDir.mkdirs()) {
-                customCacheDir = cacheDir;
+    public static File getCacheCustomDir(Context context,
+                                         String customDirName) {
+        File cacheDir = getCacheDir(context);
+        File cacheCustomDir = new File(cacheDir, customDirName);
+        if (!cacheCustomDir.exists()) {
+            if (!cacheCustomDir.mkdirs()) {
+                cacheCustomDir = cacheDir;
             }
         }
-        return customCacheDir;
+        return cacheCustomDir;
     }
 
     /**
-     * Returns custom application files directory . Cache directory will be
-     * created on SD card
-     * <i>("/Android/data/[app_package_name]/files/customDir")</i> if card is
-     * mounted. Else - Android defines files directory on device's file system.
+     * Returns the file which the absolute path to the directory on the SD card or on the filesystem,
+     * where the "files" custom directory will be created on SD card
+     * <i>("/Android/data/[app_package_name]/files/customDirName")</i> if card is mounted.
+     * Else - as a child file in the "files" directory on device's file system defined by Android.
      *
-     * @param context Application context
-     * @return Cache {@link File directory}
+     * @param context       Application context
+     * @param customDirName custom directory name
+     * @return filesCustomFile {@link File File},which holding application custom files.
      */
-    public static File getCustomFilesDirectory(Context context,
-                                               String customDir) {
-        File filesDir = getFilesDirectory(context);
-        File customFilesDir = new File(filesDir, customDir);
-        if (!customFilesDir.exists()) {
-            if (!customFilesDir.mkdirs()) {
-                customFilesDir = filesDir;
+    public static File getFilesCustomDir(Context context,
+                                         String customDirName) {
+        File filesDir = getFilesDir(context);
+        File filesCustomDir = new File(filesDir, customDirName);
+        if (!filesCustomDir.exists()) {
+            if (!filesCustomDir.mkdirs()) {
+                filesCustomDir = filesDir;
             }
         }
-        return customFilesDir;
+        return filesCustomDir;
     }
 
     /**
-     * Returns specified application cache directory. Cache directory will be
-     * created on SD card by defined path if card is mounted. Else - Android
-     * defines cache directory on device's file system.
+     * Returns the file which the absolute path to the application specific extend directory.
+     * where the extend file directory will be created on
+     * SD card <i>("/Android/data/[app_package_name]/extendDirName")</i> if card is mounted.
+     * Else - as a child file in the file return by {@link #getFilesCustomDir(Context, String)}
      *
-     * @param context    Application context
-     * @param ownDirPath own directory path
-     * @return Cache {@link File directory}
+     * @param context       Application context
+     * @param extendDirName extend directory name
+     * @return extendFile {@link File file},which holding application extend files.
      */
-    public static File getOwnDirectory(Context context, String ownDirPath) {
-        File appCacheDir = null;
+    public static File getExtendDir(Context context, String extendDirName) {
+        File appExtendDir = null;
         if (Environment.getExternalStorageState().equals(
                 Environment.MEDIA_MOUNTED)) {
-            appCacheDir = new File(Environment.getExternalStorageDirectory(),
-                    ownDirPath);
+            appExtendDir = getExternalDir(context, extendDirName);
         }
-        if (appCacheDir == null
-                || (!appCacheDir.exists() && !appCacheDir.mkdirs())) {
-            appCacheDir = context.getCacheDir();
+        if (appExtendDir == null) {
+            appExtendDir = getFilesCustomDir(context, extendDirName);
         }
-        return appCacheDir;
+        return appExtendDir;
+    }
+
+    /**
+     * Returns the file which the absolute path to the application specific extend directory,
+     * and which will not be deleted when the application uninstalled.
+     * where the extend file directory will be created on
+     * SD card <i>("/lnja/chat/image")</i>(e.g customPath = "lnja/chat/image") if card is mounted.
+     * Else - will not be create on SD card.
+     *
+     * @param customPath the absolute custom path,e.g customPath = "lnja/chat/image"
+     * @return extendFile {@link File file},which holding application extend files.
+     */
+    public static File getExtendDir(String customPath) {
+        File appExtendDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), customPath);
+        if (appExtendDir != null && !appExtendDir.exists()) {
+            if (!appExtendDir.mkdirs()) {
+                return null;
+            }
+        }
+        return appExtendDir;
     }
 
     private static File getExternalCacheDir(Context context) {
@@ -127,11 +151,11 @@ public final class StorageUtils {
         return getExternalDir(context, "files");
     }
 
-    private static File getExternalDir(Context context, String customDir) {
+    private static File getExternalDir(Context context, String customDirName) {
         File dataDir = new File(new File(
                 Environment.getExternalStorageDirectory(), "Android"), "data");
         File appCustomDir = new File(
-                new File(dataDir, context.getPackageName()), customDir);
+                new File(dataDir, context.getPackageName()), customDirName);
         if (!appCustomDir.exists()) {
             if (!appCustomDir.mkdirs()) {
                 Log.w("StorageUtils",
@@ -146,29 +170,5 @@ public final class StorageUtils {
             }
         }
         return appCustomDir;
-    }
-
-    /**
-     * 获取sd卡上的目录，不随app卸载而删除，目前目录定为sd卡下面[app_package_name]
-     */
-    public static File getPermanentDir(Context context, String customDir) {
-        File permanentDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), customDir);
-        if (!permanentDir.exists()) {
-            if (!permanentDir.mkdirs()) {
-                return null;
-            }
-        }
-        return permanentDir;
-    }
-
-    /**
-     * 获取图片保存目录，目前定为[app_package_name]/image
-     */
-    public static File getImageSavePath(Context context, String fileName) {
-        File imageDir = getPermanentDir(context,"len/tools/android/image");
-        if (imageDir != null) {
-            return new File(imageDir, fileName);
-        }
-        return null;
     }
 }

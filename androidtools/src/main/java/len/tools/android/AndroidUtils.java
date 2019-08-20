@@ -667,7 +667,7 @@ public class AndroidUtils {
      */
     private static File getDevicesDir(Context context) {
         File mCropFile = null;
-        mCropFile = new File(StorageUtils.getCustomFilesDirectory(context, "device"), ".DEVICE");
+        mCropFile = new File(StorageUtils.getFilesCustomDir(context, "device"), ".DEVICE");
         return mCropFile;
     }
 

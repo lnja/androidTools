@@ -16,13 +16,13 @@ import java.net.URL;
 
 public class BitmapUtils {
 
-    public static final String WIDTH_PLACEHOLDER = "{WIDTH}";
-    public static final String HEIGHT_PALACEHOLDER = "{HEIGHT}";
+    public static final String WIDTH_PLACE_HOLDER = "{WIDTH}";
+    public static final String HEIGHT_PLACE_HOLDER = "{HEIGHT}";
 
     /**
      * 定缩略图的宽最少为<Width>，高最少为<Height>，进行等比缩放，不裁剪。如果只指定 w 参数或只指定 h 参数，代表长宽限定为同样的值
      */
-    private static String THUMB_SUFFIX = "?imageView2/0/w/" + WIDTH_PLACEHOLDER + "/h/" + HEIGHT_PALACEHOLDER;
+    private static String THUMB_SUFFIX = "?imageView2/0/w/" + WIDTH_PLACE_HOLDER + "/h/" + HEIGHT_PLACE_HOLDER;
 
 
     public static Bitmap downloadBitmap(String bitmapUrl) {
