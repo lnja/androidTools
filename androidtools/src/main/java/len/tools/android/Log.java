@@ -6,7 +6,7 @@ public class Log {
 
     private static boolean enableLog = true;
     private static String globalTag = null;
-    private static int level = android.util.Log.VERBOSE;
+    private static int level = android.util.Log.INFO;
 
     public static void enableLog(boolean enableLog) {
         Log.enableLog = enableLog;
