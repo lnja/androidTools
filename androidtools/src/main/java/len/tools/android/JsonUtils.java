@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.*;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonSerializer;
 import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -65,7 +67,6 @@ public class JsonUtils {
     }
 
     public static <T> T gsonToEntity(String json, Type type) {
-        JsonInterfaceCheck.assetType(type);
         try {
             return getGson().fromJson(json, type);
         } catch (JsonSyntaxException e) {
@@ -112,6 +113,7 @@ public class JsonUtils {
     }
 
     public static <T> T toEntity(String json, Class<T> classOfT) {
+        JsonInterfaceCheck.assetType(classOfT);
         if (json == null || "".equals(json.trim()) || classOfT == null) {
             return null;
         }
@@ -148,6 +150,8 @@ public class JsonUtils {
     @SuppressWarnings("rawtypes")
     public static <T> List<T> toList(String json, Class<? extends List> collectionClass, Class<T> elementClass)
             throws IOException {
+        JsonInterfaceCheck.assetType(collectionClass);
+        JsonInterfaceCheck.assetType(elementClass);
         JavaType javaType = getObjectMapper().getTypeFactory().constructCollectionType(collectionClass, elementClass);
         return getObjectMapper().readValue(json, javaType);
     }
@@ -167,6 +171,9 @@ public class JsonUtils {
     @SuppressWarnings("rawtypes")
     public static <K, V> Map<K, V> toMap(String json, Class<? extends Map> mapClass, Class<K> keyClass,
                                          Class<V> valueClass) throws IOException {
+        JsonInterfaceCheck.assetType(mapClass);
+        JsonInterfaceCheck.assetType(keyClass);
+        JsonInterfaceCheck.assetType(valueClass);
         JavaType javaType = getObjectMapper().getTypeFactory().constructMapType(mapClass, keyClass, valueClass);
         return getObjectMapper().readValue(json, javaType);
     }
