@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 public class Log {
 
     private static boolean enableLog = true;
-    private static String globalTag = null;
+    private static String globalTag = "lnja";
     private static int level = android.util.Log.INFO;
 
     public static void enableLog(boolean enableLog) {

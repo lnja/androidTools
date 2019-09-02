@@ -24,7 +24,7 @@ import java.util.Set;
  */
 public class JsonInterfaceCheck {
 
-    public static final boolean DEBUG = true;
+    public static boolean checkable = false;
 
     private JsonInterfaceCheck() {
 
@@ -42,7 +42,7 @@ public class JsonInterfaceCheck {
     private static void assetType(@NonNull Type type, @NonNull String fieldOwner,
                                   @NonNull String fieldName, int modifiers, @NonNull Set<Type> excludes,
                                   boolean acceptTypeVariable) {
-        if (!DEBUG) {
+        if (!checkable) {
             return;
         }
 
@@ -180,4 +180,11 @@ public class JsonInterfaceCheck {
         return false;
     }
 
+    public static boolean isCheckable() {
+        return checkable;
+    }
+
+    public static void setCheckable(boolean checkable) {
+        JsonInterfaceCheck.checkable = checkable;
+    }
 }
