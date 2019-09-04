@@ -50,8 +50,8 @@ class MainActivity : AppCompatActivity() {
 
         Log.e("}loggerDemo")
 
-        Logger.e(JsonUtils.toJsonViewStr(rawJson))
+        Logger.e(JsonUtils.toJsonFormatStr(rawJson))
 
-        Logger.e(JsonUtils.toJsonViewStr(rawJson2))
+        Logger.e(JsonUtils.toJsonFormatStr(rawJson2))
     }
 }
