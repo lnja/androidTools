@@ -1,13 +1,24 @@
 package len.tools.android;
 
 import android.support.annotation.Nullable;
+
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.google.gson.*;
-import com.google.gson.reflect.TypeToken;
+import com.google.gson.JsonSyntaxException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,7 +57,10 @@ public class JsonUtils {
         return gson;
     }
 
-    public static <T> T gsonToEntity(JsonElement json, Class<T> classOfT) {
+    public static <T> T gsonToEntity(@Nullable JsonElement json, @Nullable Class<T> classOfT) {
+        if(null == json || null == classOfT){
+            return null;
+        }
         JsonInterfaceCheck.assetType(classOfT);
         try {
             return getGson().fromJson(json, classOfT);
@@ -56,7 +70,10 @@ public class JsonUtils {
         }
     }
 
-    public static <T> T gsonToEntity(String json, Class<T> classOfT) {
+    public static <T> T gsonToEntity(@Nullable String json,@Nullable Class<T> classOfT) {
+        if(StringUtils.isEmpty(json)  || null == classOfT){
+            return null;
+        }
         JsonInterfaceCheck.assetType(classOfT);
         try {
             return getGson().fromJson(json, classOfT);
@@ -66,7 +83,11 @@ public class JsonUtils {
         }
     }
 
-    public static <T> T gsonToEntity(String json, Type type) {
+    public static <T> T gsonToEntity(@Nullable String json, @Nullable Type type) {
+        if(StringUtils.isEmpty(json)  || null == type){
+            return null;
+        }
+        JsonInterfaceCheck.assetType(type);
         try {
             return getGson().fromJson(json, type);
         } catch (JsonSyntaxException e) {
@@ -75,7 +96,10 @@ public class JsonUtils {
         }
     }
 
-    public static String gsonToJson(Object src) {
+    public static String gsonToJson(@Nullable Object src) {
+        if(null == src){
+            return null;
+        }
         try {
             return getGson().toJson(src);
         } catch (JsonSyntaxException e) {
@@ -99,10 +123,11 @@ public class JsonUtils {
         return objectMapper;
     }
 
-    public static <T> T toEntity(String json, JavaType javaType) {
-        if (json == null || "".equals(json.trim()) || javaType == null) {
+    public static <T> T toEntity(@Nullable String json,@Nullable JavaType javaType) {
+        if (StringUtils.isEmpty(json) || javaType == null) {
             return null;
         }
+        JsonInterfaceCheck.assetType(javaType);
         try {
             return getObjectMapper().readValue(json, javaType);
         } catch (Exception e) {
@@ -112,11 +137,11 @@ public class JsonUtils {
         return null;
     }
 
-    public static <T> T toEntity(String json, Class<T> classOfT) {
-        JsonInterfaceCheck.assetType(classOfT);
-        if (json == null || "".equals(json.trim()) || classOfT == null) {
+    public static <T> T toEntity(@Nullable String json, @Nullable Class<T> classOfT) {
+        if (StringUtils.isEmpty(json)  || classOfT == null) {
             return null;
         }
+        JsonInterfaceCheck.assetType(classOfT);
         try {
             return getObjectMapper().readValue(json, classOfT);
         } catch (Exception e) {
@@ -126,14 +151,17 @@ public class JsonUtils {
         return null;
     }
 
-    public static String toJson(Object src) {
+    public static String toJson(@Nullable Object src) {
+        if(null == src){
+            return null;
+        }
         try {
             return getObjectMapper().writeValueAsString(src);
         } catch (JsonProcessingException e) {
             Log.e(e.getMessage());
             e.printStackTrace();
         }
-        return "";
+        return null;
     }
 
     /**
@@ -148,8 +176,11 @@ public class JsonUtils {
      * @throws IOException
      */
     @SuppressWarnings("rawtypes")
-    public static <T> List<T> toList(String json, Class<? extends List> collectionClass, Class<T> elementClass)
+    public static <T> List<T> toList(@Nullable String json, @Nullable Class<? extends List> collectionClass, @Nullable Class<T> elementClass)
             throws IOException {
+        if(StringUtils.isEmpty(json) || null == collectionClass || null == elementClass){
+            return null;
+        }
         JsonInterfaceCheck.assetType(collectionClass);
         JsonInterfaceCheck.assetType(elementClass);
         JavaType javaType = getObjectMapper().getTypeFactory().constructCollectionType(collectionClass, elementClass);
@@ -169,8 +200,11 @@ public class JsonUtils {
      * @throws IOException
      */
     @SuppressWarnings("rawtypes")
-    public static <K, V> Map<K, V> toMap(String json, Class<? extends Map> mapClass, Class<K> keyClass,
+    public static <K, V> Map<K, V> toMap(@Nullable String json, @Nullable Class<? extends Map> mapClass, @Nullable Class<K> keyClass,
                                          Class<V> valueClass) throws IOException {
+        if(StringUtils.isEmpty(json) || null == mapClass || null == keyClass){
+            return null;
+        }
         JsonInterfaceCheck.assetType(mapClass);
         JsonInterfaceCheck.assetType(keyClass);
         JsonInterfaceCheck.assetType(valueClass);
@@ -178,7 +212,10 @@ public class JsonUtils {
         return getObjectMapper().readValue(json, javaType);
     }
 
-    public static String toPrintFormatJson(Object src) {
+    public static String toJsonFormatStr(@Nullable Object src) {
+        if(null == src){
+            return "Empty/Null json object";
+        }
         try {
             return getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(src);
         } catch (JsonGenerationException e) {
@@ -191,7 +228,7 @@ public class JsonUtils {
             Log.e(e.getMessage());
             e.printStackTrace();
         }
-        return "";
+        return "Invalid Json";
     }
 
     /**
@@ -200,7 +237,7 @@ public class JsonUtils {
      * @param rawJsonStr 需要格式化的json串
      * @return 格式化后的json串
      */
-    public static String toJsonViewStr(@Nullable String rawJsonStr) {
+    public static String toJsonFormatStr(@Nullable String rawJsonStr) {
         if (StringUtils.isEmpty(rawJsonStr)) {
             return "Empty/Null json content";
         }
@@ -255,7 +292,7 @@ public class JsonUtils {
         }
     }
 
-    public static Class<?> getRawType(Type type) {
+    public static Class<?> getRawType(@Nullable Type type) {
         if (type instanceof Class<?>) {
             // type is a normal class.
             return (Class<?>) type;
